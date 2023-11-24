@@ -23,8 +23,8 @@ corrcoefDict = {}       # to collect all corrcoef value from all measurements
 #=============================================== Import files (sd card) =====================================#
 
 i = 1
-while os.path.isfile(f"meresek\meas{i}\meas_{i}.txt"):
-    files.append(open(f"meresek\meas{i}\meas_{i}.txt", 'r'))
+while os.path.isfile(f"szakdolgozat\meresek\sd\meas_{i}.txt"):
+    files.append(open(f"szakdolgozat\meresek\sd\meas_{i}.txt", 'r'))
     i += 1
 
 for file in files:
@@ -34,8 +34,8 @@ for file in files:
 #=============================================== Import files (mqtt) ========================================#
 '''
 i = 1
-while os.path.isfile(f"meresek\meas{i}\mqtt_meas_{i}.txt"):
-    files.append(open(f"meresek\meas{i}\mqtt_meas_{i}.txt", 'r'))
+while os.path.isfile(f"meresek\mqtt\mqtt_meas_{i}.txt"):
+    files.append(open(f"meresek\mqtt\mqtt_meas_{i}.txt", 'r'))
     i += 1
 
 for file in files:
@@ -303,13 +303,14 @@ def plotMQCharacteristic():
 #============================================================================================================#
 #=============================================== Call functions =============================================#
 
-# printAllCorrCoefValues()
+printAllCorrCoefValues()
+
 plotAllCorrCoefValues()
 
 plotAllMeasurements()
 
 plotMQCharacteristic()
 
-#for meas in measObjects:
-#    meas.plotMeas()
+for meas in measObjects:
+    meas.plotMeas()
 

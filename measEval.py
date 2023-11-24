@@ -12,7 +12,7 @@ from scipy.optimize import curve_fit
 
 Vcc = 5
 mqNames = ['MQ2', 'MQ3', 'MQ4', 'MQ5', 'MQ6', 'MQ7', 'MQ8', 'MQ9', 'MQ135', 'MQ137']
-SensorR0 = {'MQ2': 9.49, 'MQ3': 10.33, 'MQ4': 3735, 'MQ5': 499, 'MQ6': 568.24, 'MQ7': 28.41, 'MQ8': 6.46, 'MQ9': 61.5, 'MQ135': 499, 'MQ137': 4.56,} 
+SensorR0 = {'MQ2': 9.49, 'MQ3': 10.33, 'MQ4': 3735, 'MQ5': 499, 'MQ6': 568.24, 'MQ7': 28.41, 'MQ8': 6.46, 'MQ9': 61.5, 'MQ135': 499, 'MQ137': 6} 
 SensorRL = {'MQ2': 2, 'MQ3': 10, 'MQ4': 15, 'MQ5': 1, 'MQ6': 20, 'MQ7': 1, 'MQ8': 1, 'MQ9': 1, 'MQ135': 1, 'MQ137': 1,}
 files = []              # to collect all opened files
 files_mqtt = []
@@ -23,75 +23,78 @@ corrcoefDict = {}       # to collect all corrcoef value from all measurements
 
 Polynomial = np.polynomial.Polynomial
 
+source = 'SD'
+
 #============================================================================================================#
 #=============================================== Import files (sd card) =====================================#
 
-path = 'szakdolgozat\meresek\sd\\'
-arr = os.listdir('C:\\meresek\sd')
-for txtName in arr:
-    files.append(open(path+txtName, 'r'))
-
-for file in files:
-    measDicts.append(ast.literal_eval(file.read()))
+if source == 'SD':
+    path = '\meresek\sd\\'
+    arr = os.listdir('\meresek\sd')
+    arr.sort(key=lambda f: int(''.join(filter(str.isdigit, f))))
+    for txtName in arr:
+        files.append(open(path+txtName, 'r'))
+    for file in files:
+        measDicts.append(ast.literal_eval(file.read()))
 
 #============================================================================================================#
 #=============================================== Import files (mqtt) ========================================#
-'''
-i = 1
-while os.path.isfile(f"meresek\meas{i}\mqtt_meas_{i}.txt"):
-    files.append(open(f"meresek\meas{i}\mqtt_meas_{i}.txt", 'r'))
-    i += 1
+if source == 'MQTT':
+    path = '\meresek\mqtt\\'
+    arr = os.listdir('\meresek\mqtt')
+    arr.sort(key=lambda f: int(''.join(filter(str.isdigit, f))))
+    for txtName in arr:
+        files.append(open(path+txtName, 'r'))
 
-for file in files:
-    lines = file.readlines()
-    measList = []
-    temp = {}
-    for data in lines:
-        line = json.loads(data)
-        temp["time"] = line["time"]-1698103996217
-        if line["topic"] == "esp32/temperature":
-            temp["temperature"] = line["payload"]
-        elif line["topic"] == "esp32/humidity":
-            temp["humidity"] = line["payload"]
-        elif line["topic"] == "esp32/MQ2":
-            temp["MQ2"] = line["payload"]
-        elif line["topic"] == "esp32/MQ3":
-            temp["MQ3"] = line["payload"]
-        elif line["topic"] == "esp32/MQ4":
-            temp["MQ4"] = line["payload"]
-        elif line["topic"] == "esp32/MQ5":
-            temp["MQ5"] = line["payload"]
-        elif line["topic"] == "esp32/MQ6":
-            temp["MQ6"] = line["payload"]
-        elif line["topic"] == "esp32/MQ7":
-            temp["MQ7"] = line["payload"]
-        elif line["topic"] == "esp32/MQ8":
-            temp["MQ8"] = line["payload"]
-        elif line["topic"] == "esp32/MQ9":
-            temp["MQ9"] = line["payload"]
-        elif line["topic"] == "esp32/MQ135":
-            temp["MQ135"] = line["payload"]
-        elif line["topic"] == "esp32/MQ137":
-            temp["MQ137"] = line["payload"]
-        elif line["topic"] == "esp32/nh3_ppm":
-            temp["nh3_ppm"] = line["payload"]
-        if line["topic"] == "esp32/nh3_ppm":
-            measList.append(temp)
-            temp = {}
-    measDicts.append(measList)
-
-'''
+    for file in files:
+        lines = file.readlines()
+        measList = []
+        temp = {}
+        for data in lines:
+            line = json.loads(data)
+            temp["time"] = line["time"]
+            if line["topic"] == "esp32/temperature":
+                temp["temperature"] = line["payload"]
+            elif line["topic"] == "esp32/humidity":
+                temp["humidity"] = line["payload"]
+            elif line["topic"] == "esp32/MQ2":
+                temp["MQ2"] = line["payload"]
+            elif line["topic"] == "esp32/MQ3":
+                temp["MQ3"] = line["payload"]
+            elif line["topic"] == "esp32/MQ4":
+                temp["MQ4"] = line["payload"]
+            elif line["topic"] == "esp32/MQ5":
+                temp["MQ5"] = line["payload"]
+            elif line["topic"] == "esp32/MQ6":
+                temp["MQ6"] = line["payload"]
+            elif line["topic"] == "esp32/MQ7":
+                temp["MQ7"] = line["payload"]
+            elif line["topic"] == "esp32/MQ8":
+                temp["MQ8"] = line["payload"]
+            elif line["topic"] == "esp32/MQ9":
+                temp["MQ9"] = line["payload"]
+            elif line["topic"] == "esp32/MQ135":
+                temp["MQ135"] = line["payload"]
+            elif line["topic"] == "esp32/MQ137":
+                temp["MQ137"] = line["payload"]
+            elif line["topic"] == "esp32/nh3_ppm":
+                temp["nh3_ppm"] = line["payload"]
+            if line["topic"] == "esp32/nh3_ppm":
+                measList.append(temp)
+                temp = {}
+        measDicts.append(measList)
 
 #============================================================================================================#
 #=============================================== Create measClass============================================#
 
 class measClass:
     def __init__(self, meas = [], measnumber = None):
-        self.measnumber = measnumber
         self.meas = meas
+        self.measnumber = measnumber
         self.time = self.setValues("time")
         self.temperature = self.setValues("temperature")
         self.humidity = self.setValues("humidity")
+        self.nh3_ppm = self.setValues("nh3_ppm")
         self.MQ2 = self.setValues("MQ2")
         self.MQ3 = self.setValues("MQ3")
         self.MQ4 = self.setValues("MQ4")
@@ -102,23 +105,20 @@ class measClass:
         self.MQ9 = self.setValues("MQ9")
         self.MQ135 = self.setValues("MQ135")
         self.MQ137 = self.setValues("MQ137")
-        self.nh3_ppm = self.setValues("nh3_ppm")
 
     def setValues(self, mqSensor = ""):
         valueArray = []
-        for i, val in enumerate(self.meas):
-            if(self.measnumber > 1 and mqSensor.startswith('MQ')):
-                valueArray.append(val[mqSensor]*5/4095 / 1.15)
-            elif(mqSensor.startswith('MQ')):
-                valueArray.append(val[mqSensor]*5/4095)
-            elif (self.measnumber > 0 and (mqSensor == 'nh3_ppm')):
-                ppm = self.calcNH3ppm(self.MQ137[i])
-                valueArray.append(self.calcNH3ppm(ppm if ppm < 2000 else np.nan))
+        for val in self.meas:
+            if mqSensor.startswith('MQ'):
+                valueArray.append(val[mqSensor]*3.3/4095)
             elif mqSensor == 'nh3_ppm':
-                valueArray.append(val["nh3_ppm"])
+                ppm = self.calcNH3ppm(val['MQ137'])
+                valueArray.append(ppm)
+            elif mqSensor == 'time':
+                valueArray.append(val[mqSensor]-self.meas[0]['time'])
             else:
                 valueArray.append(val[mqSensor])
-        return self.ZscoreFilter(valueArray)
+        return valueArray
     
     def getMeasnumber(self):
         return self.measnumber
@@ -163,15 +163,14 @@ class measClass:
         m = -0.276    #Enter calculated Slope
         b = -0.224     #Enter calculated intercept
 
-        VRL = MQ137
-        Rs = ((Vcc/VRL)-1) * RL
-        
-        ratio = Rs/R0                           #find ratio Rs/Ro
+        VRL = MQ137 * 3.3 / 4095
+        RS = ((Vcc/VRL)-1) * RL
+        ratio = RS/R0                           #find ratio Rs/Ro
         ppm = pow(10, ((np.log10(ratio)-b)/m))     #use formula to calculate ppm
-        print(ppm)
         return ppm
     
-    def ZscoreFilter(self, array):    # probably not the best
+    @staticmethod
+    def ZscoreFilter(array):    # probably not the best
         # Z-score kiszámítása az adatokhoz
         z_scores = np.abs(stats.zscore(array))
 
@@ -230,7 +229,7 @@ def plotAllCorrCoefValues():
 def plotAllMeasurements():
     i = 0
     with plt.style.context('bmh'):
-        fig, ax = plt.subplots(nrows=3, ncols=2)
+        fig, ax = plt.subplots(nrows=3, ncols=3)
         for row in ax:
             for col in row:
                 col.set_title(f'{measObjects[i].getMeasnumber()}. measurement', fontsize=15)
@@ -243,31 +242,12 @@ def plotAllMeasurements():
                 i+=1
     plt.show()
 
-def ZscoreFilter(array):    # probably not the best
-        # Z-score kiszámítása az adatokhoz
-        z_scores = np.abs(stats.zscore(array))
-
-        threshold = 2
-
-        # Kiugró értékek kiszűrése
-        outliers = np.where(z_scores > threshold)
-        
-        # Kiugró értékek helyettesítése a kiszűrés előtti és utáni értékek átlagával
-        for i in outliers[0]:
-            if i > 0 and i < len(array) - 1:
-                array[i] = (array[i - 1] + array[i + 1]) / 2
-            elif i == 0:
-                array[i] = (array[i + 1] + array[i + 2]) / 2
-            else:
-                array[i] = (array[i - 1] + array[i - 2]) / 2
-        return array
-
 def averageOfPPM(x, y):
     # Pontok száma, amire átlagolni szeretnénk
     num_points = 10
 
-    x = ZscoreFilter(x)
-    y = ZscoreFilter(y)
+    x = measClass.ZscoreFilter(x)
+    y = measClass.ZscoreFilter(y)
 
     # Átlagolás az x tengely mentén
     x_averaged = np.array([np.array(x[i:i+num_points]).mean() for i in range(0, len(x), num_points)])
@@ -320,12 +300,27 @@ def plotMQCharacteristic():
     RsValues = getallRs()
     for name in mqNames: 
         with plt.style.context('bmh'):
-            x = averageOfPPM(getallNH3ppm(), RsValues[name] / SensorR0[name])[0]
-            y = averageOfPPM(getallNH3ppm(), RsValues[name] / SensorR0[name])[1]
-            curvefit(x, y)
+            # x = averageOfPPM(getallNH3ppm(), RsValues[name] / SensorR0[name])[0]
+            # y = averageOfPPM(getallNH3ppm(), RsValues[name] / SensorR0[name])[1]
+            # curvefit(x, y)
             # plt.plot(x, a + b * np.log(x), color = "blue")
-            # plt.plot(getallNH3ppm(), RsValues[name] / SensorR0[name], label= name, marker='.', linestyle='-',)
-            plt.scatter(x, y, label= name, c = "green", marker='.', linestyle='-', alpha=0.2,)
+            plt.scatter(getallNH3ppm(), RsValues[name] / SensorR0[name], label= name, marker='.', linestyle='-',)
+            # plt.scatter(x, y, label= name, c = "green", marker='.', linestyle='-', alpha=0.2,)
+            plt.title(f"{name} Sensor\'s characteristic")
+            plt.xlabel("PPM")
+            plt.ylabel("Rs/R0")
+            plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize="5", prop = { "size": 7 }, fancybox=True, shadow=True, ncol=1)
+            plt.xscale('log')
+            plt.yscale('log')
+        plt.show()
+
+def plotOneMQ(num):
+    meas = measObjects[num]
+    for name in mqNames:
+        RL = SensorRL[name]
+        Rs = ((Vcc / np.array(meas.getSensorArray(name)))-1) * RL
+        with plt.style.context('bmh'):
+            plt.scatter(meas.getSensorArray('nh3_ppm'), Rs / SensorR0[name], label= name, marker='.', linestyle='-',)
             plt.title(f"{name} Sensor\'s characteristic")
             plt.xlabel("PPM")
             plt.ylabel("Rs/R0")
@@ -337,10 +332,11 @@ def plotMQCharacteristic():
 #============================================================================================================#
 #=============================================== Call functions =============================================#
 
-#printAllCorrCoefValues()
-plotAllCorrCoefValues()
-#plotAllMeasurements()
+# printAllCorrCoefValues()
+# plotAllCorrCoefValues()
+# plotAllMeasurements()
 plotMQCharacteristic()
+# plotOneMQ(4)
 
-for meas in measObjects:
-    meas.plotMeas()
+#for meas in measObjects:
+#    meas.plotMeas()

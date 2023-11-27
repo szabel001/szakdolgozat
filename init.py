@@ -108,7 +108,10 @@ class MeasClass:
         valueArray = []
         for val in self.meas:
             if mqSensor.startswith('MQ'):
-                valueArray.append(val[mqSensor]*3.3/4095)
+                mq_voltage = val[mqSensor]*3.3/4095
+                if mq_voltage > 3:
+                    mq_voltage = 0.01
+                valueArray.append(mq_voltage)
             elif mqSensor == 'nh3_ppm':
                 ppm = self.calcNH3ppm(val['MQ137'])
                 valueArray.append(ppm)
@@ -148,6 +151,7 @@ class MeasClass:
         for name in mqNames: 
             with plt.style.context('bmh'):
                 plt.scatter(np.array(self.time)/1000, np.array(self.getSensorArray(name)), label= name, marker='.', linestyle='-',)
+                plt.scatter(np.array(self.time)/1000, np.array(self.getSensorArray('nh3_ppm'))/1000, label= name, marker='.', linestyle='-',)
                 plt.title(f'{self.getMeasnumber()}. measurement')
                 plt.xlabel("Time (sec)")
                 # plt.ylabel("A/D converter's output (bit)")
@@ -168,11 +172,9 @@ class MeasClass:
         return ppm
     
     @staticmethod
-    def ZscoreFilter(array):    # probably not the best
+    def ZscoreFilter(array, threshold = 5):    # probably not the best
         # Z-score kiszámítása az adatokhoz
         z_scores = np.abs(stats.zscore(array))
-
-        threshold = 2
 
         # Kiugró értékek kiszűrése
         outliers = np.where(z_scores > threshold)

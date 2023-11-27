@@ -1,8 +1,86 @@
 from importing_modules import *
+#============================================================================================================#
+#============================================ Initialize variable ===========================================#
+
+Vcc = 5
+
+files = []              # to collect all opened files
+files_mqtt = []
+measDicts = []          # to collect all json from files
+measDicts_mqtt = []
+measObjects = []        # to collect all object created from jsons
+corrcoefDict = {}       # to collect all corrcoef value from all measurements
+
+Polynomial = np.polynomial.Polynomial
 
 mqNames = ['MQ2', 'MQ3', 'MQ4', 'MQ5', 'MQ6', 'MQ7', 'MQ8', 'MQ9', 'MQ135', 'MQ137']
-SensorR0 = {'MQ2': 9.49, 'MQ3': 10.33, 'MQ4': 3735, 'MQ5': 499, 'MQ6': 568.24, 'MQ7': 28.41, 'MQ8': 6.46, 'MQ9': 61.5, 'MQ135': 499, 'MQ137': 6} 
+SensorR0 = {'MQ2': 9.49, 'MQ3': 10.33, 'MQ4': 3735, 'MQ5': 499, 'MQ6': 568.24, 'MQ7': 28.41, 'MQ8': 6.46, 'MQ9': 61.5, 'MQ135': 499, 'MQ137': 20} 
 SensorRL = {'MQ2': 2, 'MQ3': 10, 'MQ4': 15, 'MQ5': 1, 'MQ6': 20, 'MQ7': 1, 'MQ8': 1, 'MQ9': 1, 'MQ135': 1, 'MQ137': 1,}
+
+#============================================================================================================#
+#=============================================== Set Source =================================================#
+
+source = 'SD'
+
+#============================================================================================================#
+#=============================================== Import files (sd card) =====================================#
+
+if source == 'SD':
+    path = '.\szakdolgozat\meresek\sd\\'
+    arr = os.listdir(path)
+    arr.sort(key=lambda f: int(''.join(filter(str.isdigit, f))))
+    for txtName in arr:
+        files.append(open(path+txtName, 'r'))
+    for file in files:
+        measDicts.append(ast.literal_eval(file.read()))
+
+#============================================================================================================#
+#=============================================== Import files (mqtt) ========================================#
+
+if source == 'MQTT':
+    path = '.\szakdolgozat\meresek\mqtt\\'
+    arr = os.listdir(path)
+    arr.sort(key=lambda f: int(''.join(filter(str.isdigit, f))))
+    for txtName in arr:
+        files.append(open(path+txtName, 'r'))
+
+    for file in files:
+        lines = file.readlines()
+        measList = []
+        temp = {}
+        for data in lines:
+            line = json.loads(data)
+            temp["time"] = line["time"]
+            if line["topic"] == "esp32/temperature":
+                temp["temperature"] = line["payload"]
+            elif line["topic"] == "esp32/humidity":
+                temp["humidity"] = line["payload"]
+            elif line["topic"] == "esp32/MQ2":
+                temp["MQ2"] = line["payload"]
+            elif line["topic"] == "esp32/MQ3":
+                temp["MQ3"] = line["payload"]
+            elif line["topic"] == "esp32/MQ4":
+                temp["MQ4"] = line["payload"]
+            elif line["topic"] == "esp32/MQ5":
+                temp["MQ5"] = line["payload"]
+            elif line["topic"] == "esp32/MQ6":
+                temp["MQ6"] = line["payload"]
+            elif line["topic"] == "esp32/MQ7":
+                temp["MQ7"] = line["payload"]
+            elif line["topic"] == "esp32/MQ8":
+                temp["MQ8"] = line["payload"]
+            elif line["topic"] == "esp32/MQ9":
+                temp["MQ9"] = line["payload"]
+            elif line["topic"] == "esp32/MQ135":
+                temp["MQ135"] = line["payload"]
+            elif line["topic"] == "esp32/MQ137":
+                temp["MQ137"] = line["payload"]
+            elif line["topic"] == "esp32/nh3_ppm":
+                temp["nh3_ppm"] = line["payload"]
+            if line["topic"] == "esp32/nh3_ppm":
+                measList.append(temp)
+                temp = {}
+        measDicts.append(measList)
 
 #============================================================================================================#
 #=============================================== Create measClass============================================#
@@ -35,7 +113,7 @@ class MeasClass:
                 ppm = self.calcNH3ppm(val['MQ137'])
                 valueArray.append(ppm)
             elif mqSensor == 'time':
-                valueArray.append(val[mqSensor]-self.meas[0]['time'])
+                valueArray.append((val[mqSensor]-self.meas[0]['time'])/1000)
             else:
                 valueArray.append(val[mqSensor])
         return valueArray

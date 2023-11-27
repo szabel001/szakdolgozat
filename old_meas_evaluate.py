@@ -10,7 +10,7 @@ from rrcf import RCTree # for RRCF filter
 
 Vcc = 5
 mqNames = ['MQ2', 'MQ3', 'MQ4', 'MQ5', 'MQ6', 'MQ7', 'MQ8', 'MQ9', 'MQ135', 'MQ137']
-SensorR0 = {'MQ2': 10, 'MQ3': 10, 'MQ4': 10, 'MQ5': 10, 'MQ6': 10, 'MQ7': 10, 'MQ8': 10, 'MQ9': 10, 'MQ135': 10, 'MQ137': 17}
+SensorR0 = {'MQ2': 10, 'MQ3': 10, 'MQ4': 10, 'MQ5': 10, 'MQ6': 10, 'MQ7': 10, 'MQ8': 10, 'MQ9': 10, 'MQ135': 10, 'MQ137': 14}
 SensorRL = {'MQ2': 1, 'MQ3': 1, 'MQ4': 1, 'MQ5': 1, 'MQ6': 1, 'MQ7': 1, 'MQ8': 1, 'MQ9': 1, 'MQ135': 1, 'MQ137': 1}
 files = []              # to collect all opened files
 files_mqtt = []

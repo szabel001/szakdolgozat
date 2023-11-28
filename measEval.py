@@ -5,12 +5,10 @@ from init import *
 #============================================================================================================#
 #=============================================== Evaluations ================================================#
 
-## Create list of measObjects
-for measnumber, measDict in enumerate(measDicts):
-    measObjects.append(MeasClass(measDict, measnumber+1))
-
 def averageOfPPM(x, y):
-    num_points = 15
+    num_points = 10
+    x = MeasClass.ZscoreFilter(x, 3)
+    y = MeasClass.ZscoreFilter(y, 3)
     x_averaged = np.array([np.array(x[i:i+num_points]).mean() for i in range(0, len(x), num_points)])
     y_averaged = np.array([np.array(y[i:i+num_points]).mean() for i in range(0, len(y), num_points)])
 
@@ -63,7 +61,7 @@ def getAllCorrCoefValues():
                 corrcoefDict[name] = [meas.getCorrCoefValues(name)]
     return corrcoefDict
 
-def printAllCorrCoefValues():
+def printAVGCorrCoefValues():
     for meas in measObjects:
         meas.printCorrCoefValues()
 
@@ -71,10 +69,10 @@ def plotAllCorrCoefValues():
     valueDict = getAllCorrCoefValues()
     with plt.style.context('bmh'):
         plt.title('Korreláció', fontsize=17)
-        for _, name in enumerate(mqNames):
+        for name in mqNames:
             plt.xlabel('Mérés sorszáma', fontsize=10)
             plt.ylabel('Összes szenzor korrelációs koefficienciája',  fontsize=10)
-            plt.plot(range(1, len(valueDict[name])+1), np.absolute(valueDict[name]) , c=np.random.rand(3,), label= name, marker='.', linestyle='-',)
+            plt.plot(range(1, len(valueDict[name])+1), np.absolute(valueDict[name]) , c=mqColors[name], label= name, marker='.', linestyle='-',)
             # Put a legend below current axis
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=True, ncol=5)
     for i in range(1, len(measObjects)):
@@ -116,23 +114,6 @@ def plotMQCharacteristic():
             plt.xscale('log')
             plt.yscale('log')
 
-        plt.show()
-
-def plotOneMQchar(num):
-    meas = measObjects[num]
-    for name in mqNames:
-        RL = SensorRL[name]
-        Rs = ((Vcc / np.array(meas.getSensorArray(name)))-1) * RL
-        nh3_ppm = meas.getSensorArray('nh3_ppm')
-        with plt.style.context('bmh'):
-            curvefit(nh3_ppm, Rs/SensorR0[name])
-            plt.scatter(nh3_ppm, Rs / SensorR0[name], label= name, marker='.', linestyle='-',)
-            plt.title(f"{name} szenzor karakterisztikája")
-            plt.xlabel("PPM")
-            plt.ylabel("Rs/R0")
-            plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize="5", prop = { "size": 7 }, fancybox=True, shadow=True, ncol=1)
-            plt.xscale('log')
-            plt.yscale('log')
         plt.show()
 
 #============================================================================================================#

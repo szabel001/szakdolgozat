@@ -14,7 +14,8 @@ corrcoefDict = {}       # to collect all corrcoef value from all measurements
 Polynomial = np.polynomial.Polynomial
 
 mqNames = ['MQ2', 'MQ3', 'MQ4', 'MQ5', 'MQ6', 'MQ7', 'MQ8', 'MQ9', 'MQ135', 'MQ137']
-SensorR0 = {'MQ2': 9.49, 'MQ3': 10.33, 'MQ4': 3735, 'MQ5': 499, 'MQ6': 568.24, 'MQ7': 28.41, 'MQ8': 6.46, 'MQ9': 61.5, 'MQ135': 499, 'MQ137': 20} 
+mqColors = {'MQ2': 'red', 'MQ3': 'pink', 'MQ4': 'orange', 'MQ5': 'grey', 'MQ6': 'blue', 'MQ7': 'green', 'MQ8': 'purple', 'MQ9': 'darkblue', 'MQ135': 'yellow', 'MQ137': 'black'}
+SensorR0 = {'MQ2': 9.49, 'MQ3': 10.33, 'MQ4': 3735, 'MQ5': 499, 'MQ6': 568.24, 'MQ7': 28.41, 'MQ8': 6.46, 'MQ9': 61.5, 'MQ135': 499, 'MQ137': 13} 
 SensorRL = {'MQ2': 2, 'MQ3': 10, 'MQ4': 15, 'MQ5': 1, 'MQ6': 20, 'MQ7': 1, 'MQ8': 1, 'MQ9': 1, 'MQ135': 1, 'MQ137': 1,}
 
 #============================================================================================================#
@@ -109,7 +110,7 @@ class MeasClass:
         for val in self.meas:
             if mqSensor.startswith('MQ'):
                 mq_voltage = val[mqSensor]*3.3/4095
-                if mq_voltage > 3:
+                if mq_voltage < 0.1 or mq_voltage > 3:
                     mq_voltage = 0.01
                 valueArray.append(mq_voltage)
             elif mqSensor == 'nh3_ppm':
@@ -188,3 +189,7 @@ class MeasClass:
             else:
                 array[i] = (array[i - 1] + array[i - 2]) / 2
         return array
+    
+## Create list of measObjects
+for measnumber, measDict in enumerate(measDicts):
+    measObjects.append(MeasClass(measDict, measnumber+1))

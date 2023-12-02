@@ -7,8 +7,8 @@ from init import *
 
 def averageOfPPM(x, y):
     num_points = 10
-    x = MeasClass.ZscoreFilter(x, 3)
-    y = MeasClass.ZscoreFilter(y, 3)
+    x = MeasClass.ZscoreFilter(x, 2)
+    y = MeasClass.ZscoreFilter(y, 2)
     x_averaged = np.array([np.array(x[i:i+num_points]).mean() for i in range(0, len(x), num_points)])
     y_averaged = np.array([np.array(y[i:i+num_points]).mean() for i in range(0, len(y), num_points)])
 
@@ -29,7 +29,8 @@ def curvefit(x, y):
 
     ax.set_yscale('log')
     ax.set_xscale('log')
-    m, b = np.polyfit(logA, logB, 1)
+
+    return m, c
     
 
 
@@ -95,18 +96,15 @@ def plotAllMeasurements():
     plt.show()
 
 def plotMQCharacteristic():
-    RsValues = getallRs()
+    RSValues = getallRs()
     for name in mqNames:
-        nh3_ppm = getallNH3ppm()
-        Rs = np.array([x for _,x in sorted(zip(nh3_ppm, RsValues[name]))])
-        nh3_ppm = sorted(nh3_ppm)
-        avg = averageOfPPM(nh3_ppm, Rs / SensorR0[name])
-        
-        nh3_ppm = avg[0]
-        Rs = avg[1]
         with plt.style.context('bmh'):
-            curvefit(nh3_ppm, Rs/SensorR0[name])
-            plt.scatter(nh3_ppm, Rs/SensorR0[name], c = 'g', label= name, marker='.', linestyle='-',)
+            nh3_ppm = getallNH3ppm()
+            RS_R0 = RSValues[name] / SensorR0[name]
+            m, b = curvefit(nh3_ppm, RS_R0)
+            nh3_ppm, RS_R0 = averageOfPPM(nh3_ppm, RS_R0)
+            plt.scatter(nh3_ppm, RS_R0, c = 'g', label= name, marker='.', linestyle='-',)
+            plt.text(nh3_ppm[0], min(RS_R0), 'm = ' + str(m) + '\nb = ' + str(b), fontsize = 10, bbox=dict(facecolor='none',edgecolor='black',boxstyle='square')) 
             plt.title(f"{name} szenzor karakterisztikája")
             plt.xlabel("PPM")
             plt.ylabel("Rs/R0")
@@ -120,7 +118,7 @@ def plotMQCharacteristic():
 #=============================================== Call functions =============================================#
 
 #printAllCorrCoefValues()
-plotAllCorrCoefValues()
+# plotAllCorrCoefValues()
 # plotAllMeasurements()
 plotMQCharacteristic()
 

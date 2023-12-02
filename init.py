@@ -163,13 +163,13 @@ class MeasClass:
     def calcNH3ppm(self, MQ137):
         RL = SensorRL['MQ137']      #The value of resistor RL is 1K --> measured
         R0 = SensorR0['MQ137']     #The value of resistor R0 is 1K --> measured + calculated
-        m = -0.276    #Enter calculated Slope
-        b = -0.224     #Enter calculated intercept
+        m = -0.2701    #Enter calculated Slope
+        b = -0.2276    #Enter calculated intercept
         Vcc = 5
         VRL = MQ137 * 3.3 / 4095
         RS = ((Vcc/VRL)-1) * RL
         ratio = RS/R0                           #find ratio Rs/Ro
-        ppm = pow(10, ((np.log10(ratio)-b)/m))     #use formula to calculate ppm
+        ppm = 10 ** ((np.log10(ratio)-b)/m)     #use formula to calculate ppm
         return ppm
     
     @staticmethod
@@ -179,7 +179,7 @@ class MeasClass:
 
         # Kiugró értékek kiszűrése
         outliers = np.where(z_scores > threshold)
-        
+        print(outliers)
         # Kiugró értékek helyettesítése a kiszűrés előtti és utáni értékek átlagával
         for i in outliers[0]:
             if i > 0 and i < len(array) - 1:

@@ -7454,7 +7454,7 @@
 {"time":1700406684610,"topic":"esp32/MQ8","payload":442}
 {"time":1700406684610,"topic":"esp32/MQ9","payload":0}
 {"time":1700406684610,"topic":"esp32/MQ135","payload":0}
-{"time":1700406684610,"topic":"esp32/MQ137","payload":0}
+{"time":1700406684610,"topic":"esp32/MQ137","payload":430}
 {"time":1700406684611,"topic":"esp32/nh3_ppm","payload":0}
 {"time":1700406685318,"topic":"esp32/temperature","payload":25.16}
 {"time":1700406685406,"topic":"esp32/humidity","payload":47.67}
@@ -7805,7 +7805,7 @@
 {"time":1700406711520,"topic":"esp32/MQ8","payload":467}
 {"time":1700406711520,"topic":"esp32/MQ9","payload":0}
 {"time":1700406711827,"topic":"esp32/MQ135","payload":0}
-{"time":1700406711827,"topic":"esp32/MQ137","payload":0}
+{"time":1700406711827,"topic":"esp32/MQ137","payload":405}
 {"time":1700406711827,"topic":"esp32/nh3_ppm","payload":0}
 {"time":1700406712347,"topic":"esp32/temperature","payload":24.6}
 {"time":1700406712436,"topic":"esp32/humidity","payload":45.26}
@@ -39938,7 +39938,7 @@
 {"time":1700409928813,"topic":"esp32/MQ8","payload":183}
 {"time":1700409928813,"topic":"esp32/MQ9","payload":0}
 {"time":1700409928813,"topic":"esp32/MQ135","payload":0}
-{"time":1700409928813,"topic":"esp32/MQ137","payload":0}
+{"time":1700409928813,"topic":"esp32/MQ137","payload":350}
 {"time":1700409928813,"topic":"esp32/nh3_ppm","payload":0}
 {"time":1700409929418,"topic":"esp32/temperature","payload":21.1}
 {"time":1700409929846,"topic":"esp32/humidity","payload":71.18}
@@ -42993,7 +42993,7 @@
 {"time":1700410163946,"topic":"esp32/MQ8","payload":208}
 {"time":1700410163946,"topic":"esp32/MQ9","payload":0}
 {"time":1700410163946,"topic":"esp32/MQ135","payload":0}
-{"time":1700410163946,"topic":"esp32/MQ137","payload":0}
+{"time":1700410163946,"topic":"esp32/MQ137","payload":280}
 {"time":1700410163946,"topic":"esp32/nh3_ppm","payload":0}
 {"time":1700410164653,"topic":"esp32/temperature","payload":16.37}
 {"time":1700410164731,"topic":"esp32/humidity","payload":71.06}

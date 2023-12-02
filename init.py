@@ -1,8 +1,9 @@
-from importing_modules import *
+from importModules import *
 #============================================================================================================#
 #============================================ Initialize variable ===========================================#
 
 Vcc = 5
+source = ""
 
 files = []              # to collect all opened files
 files_mqtt = []
@@ -11,17 +12,18 @@ measDicts_mqtt = []
 measObjects = []        # to collect all object created from jsons
 corrcoefDict = {}       # to collect all corrcoef value from all measurements
 
-Polynomial = np.polynomial.Polynomial
-
 mqNames = ['MQ2', 'MQ3', 'MQ4', 'MQ5', 'MQ6', 'MQ7', 'MQ8', 'MQ9', 'MQ135', 'MQ137']
 mqColors = {'MQ2': 'red', 'MQ3': 'pink', 'MQ4': 'orange', 'MQ5': 'grey', 'MQ6': 'blue', 'MQ7': 'green', 'MQ8': 'purple', 'MQ9': 'darkblue', 'MQ135': 'yellow', 'MQ137': 'black'}
 SensorR0 = {'MQ2': 9.49, 'MQ3': 10.33, 'MQ4': 3735, 'MQ5': 499, 'MQ6': 568.24, 'MQ7': 28.41, 'MQ8': 6.46, 'MQ9': 61.5, 'MQ135': 499, 'MQ137': 13} 
 SensorRL = {'MQ2': 2, 'MQ3': 10, 'MQ4': 15, 'MQ5': 1, 'MQ6': 20, 'MQ7': 1, 'MQ8': 1, 'MQ9': 1, 'MQ135': 1, 'MQ137': 1,}
 
 #============================================================================================================#
-#=============================================== Set Source =================================================#
+#=============================================== Set source =================================================#
 
-source = 'SD'
+while source != "SD" and source != "MQTT":
+    source = input("Adja meg a kívánt forrást! (MQTT / SD):").upper().strip()
+    if(source != "SD" and source != "MQTT"):
+        print("Nem megfelelően adta meg a forrás nevét! Próbálja újra! (SD / MQTT)")
 
 #============================================================================================================#
 #=============================================== Import files (sd card) =====================================#
@@ -39,7 +41,7 @@ if source == 'SD':
 #=============================================== Import files (mqtt) ========================================#
 
 if source == 'MQTT':
-    path = '.\szakdolgozat\meresek\mqtt\\'
+    path = '.\meresek\mqtt\\'
     arr = os.listdir(path)
     arr.sort(key=lambda f: int(''.join(filter(str.isdigit, f))))
     for txtName in arr:
@@ -50,7 +52,7 @@ if source == 'MQTT':
         measList = []
         temp = {}
         for data in lines:
-            line = json.loads(data)
+            line = ast.literal_eval(data)
             temp["time"] = line["time"]
             if line["topic"] == "esp32/temperature":
                 temp["temperature"] = line["payload"]
@@ -105,34 +107,34 @@ class MeasClass:
         self.MQ135 = self.setValues("MQ135")
         self.MQ137 = self.setValues("MQ137")
 
-    def setValues(self, mqSensor = ""):
+    def setValues(self, mqName = ""):
         valueArray = []
         for val in self.meas:
-            if mqSensor.startswith('MQ'):
-                mq_voltage = val[mqSensor]*3.3/4095
+            if mqName.startswith('MQ'):
+                mq_voltage = val[mqName]*3.3/4095
                 if mq_voltage < 0.1 or mq_voltage > 3:
                     mq_voltage = 0.01
                 valueArray.append(mq_voltage)
-            elif mqSensor == 'nh3_ppm':
+            elif mqName == 'nh3_ppm':
                 ppm = self.calcNH3ppm(val['MQ137'])
                 valueArray.append(ppm)
-            elif mqSensor == 'time':
-                valueArray.append((val[mqSensor]-self.meas[0]['time'])/1000)
+            elif mqName == 'time':
+                valueArray.append(val[mqName])#-self.meas[0]['time'])/1000)
             else:
-                valueArray.append(val[mqSensor])
-        return valueArray
+                valueArray.append(val[mqName])
+        return np.array(valueArray)
     
     def getMeasnumber(self):
         return self.measnumber
 
-    def getSensorArray(self, name):
-        if hasattr(self, name):
-            return getattr(self, name)
+    def getSensorArray(self, mqName):
+        if hasattr(self, mqName):
+            return getattr(self, mqName)
         else:
-            Exception(f"measClass has no {name} attribute!")
+            Exception(f"measClass has no {mqName} attribute!")
 
-    def getCorrCoefValues(self, mqArray = ""):
-        ArrayToCompare = self.getSensorArray(mqArray)
+    def getCorrCoefValues(self, mqName = ""):
+        ArrayToCompare = self.getSensorArray(mqName)
         if(all(element == ArrayToCompare[0] for element in ArrayToCompare)):
             return 0
         else:
@@ -171,24 +173,6 @@ class MeasClass:
         ratio = RS/R0                           #find ratio Rs/Ro
         ppm = 10 ** ((np.log10(ratio)-b)/m)     #use formula to calculate ppm
         return ppm
-    
-    @staticmethod
-    def ZscoreFilter(array, threshold = 5):    # probably not the best
-        # Z-score kiszámítása az adatokhoz
-        z_scores = np.abs(stats.zscore(array))
-
-        # Kiugró értékek kiszűrése
-        outliers = np.where(z_scores > threshold)
-        print(outliers)
-        # Kiugró értékek helyettesítése a kiszűrés előtti és utáni értékek átlagával
-        for i in outliers[0]:
-            if i > 0 and i < len(array) - 1:
-                array[i] = (array[i - 1] + array[i + 1]) / 2
-            elif i == 0:
-                array[i] = (array[i + 1] + array[i + 2]) / 2
-            else:
-                array[i] = (array[i - 1] + array[i - 2]) / 2
-        return array
     
 ## Create list of measObjects
 for measnumber, measDict in enumerate(measDicts):

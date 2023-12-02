@@ -1023,7 +1023,7 @@
 {"time":1700411487548,"topic":"esp32/MQ8","payload":192}
 {"time":1700411487548,"topic":"esp32/MQ9","payload":54}
 {"time":1700411487667,"topic":"esp32/MQ135","payload":0}
-{"time":1700411487667,"topic":"esp32/MQ137","payload":0}
+{"time":1700411487667,"topic":"esp32/MQ137","payload":405}
 {"time":1700411487667,"topic":"esp32/nh3_ppm","payload":0}
 {"time":1700411488402,"topic":"esp32/temperature","payload":26.51}
 {"time":1700411488443,"topic":"esp32/humidity","payload":56.23}
@@ -1036,7 +1036,7 @@
 {"time":1700411488774,"topic":"esp32/MQ8","payload":479}
 {"time":1700411488774,"topic":"esp32/MQ9","payload":35}
 {"time":1700411488774,"topic":"esp32/MQ135","payload":0}
-{"time":1700411488774,"topic":"esp32/MQ137","payload":279}
+{"time":1700411488774,"topic":"esp32/MQ137","payload":400}
 {"time":1700411488774,"topic":"esp32/nh3_ppm","payload":0.02}
 {"time":1700411489466,"topic":"esp32/temperature","payload":26.51}
 {"time":1700411489695,"topic":"esp32/humidity","payload":56.3}
@@ -1660,7 +1660,7 @@
 {"time":1700411536699,"topic":"esp32/MQ8","payload":576}
 {"time":1700411536700,"topic":"esp32/MQ9","payload":4}
 {"time":1700411536819,"topic":"esp32/MQ135","payload":0}
-{"time":1700411536820,"topic":"esp32/MQ137","payload":0}
+{"time":1700411536820,"topic":"esp32/MQ137","payload":374}
 {"time":1700411536820,"topic":"esp32/nh3_ppm","payload":0}
 {"time":1700411537452,"topic":"esp32/temperature","payload":26.71}
 {"time":1700411537621,"topic":"esp32/humidity","payload":57.87}

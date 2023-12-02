@@ -1,17 +1,13 @@
 #============================================================================================================#
 #=============================================== Imports ====================================================#
-from importing_modules import *
+from importModules import *
 from init import *
 #============================================================================================================#
 #=============================================== Evaluations ================================================#
 
-def averageOfPPM(x, y):
-    num_points = 10
-    x = MeasClass.ZscoreFilter(x, 2)
-    y = MeasClass.ZscoreFilter(y, 2)
+def averageOfPPM(x = [], y = [], num_points = 5):
     x_averaged = np.array([np.array(x[i:i+num_points]).mean() for i in range(0, len(x), num_points)])
     y_averaged = np.array([np.array(y[i:i+num_points]).mean() for i in range(0, len(y), num_points)])
-
     return x_averaged, y_averaged
 
 #https://stackoverflow.com/questions/43837179/best-fit-line-on-log-log-scales-in-python-2-7
@@ -19,11 +15,11 @@ def curvefit(x, y):
     fig=plt.figure()
     ax = fig.add_subplot(111)
 
-    logA = np.log(x) #no need for list comprehension since all z values >= 1
-    logB = np.log(y)
+    logA = np.log10(x) #no need for list comprehension since all z values >= 1
+    logB = np.log10(y)
 
     m, c = np.polyfit(logA, logB, 1) # fit log(y) = m*log(x) + c
-    y_fit = np.exp(m*logA + c) # calculate the fitted values of y 
+    y_fit = 10 ** (m*logA + c) # calculate the fitted values of y 
 
     plt.plot(x, y_fit, color = 'black', linestyle = 'dashdot')
 
@@ -32,8 +28,6 @@ def curvefit(x, y):
 
     return m, c
     
-
-
 def getallNH3ppm():
     allNH3ppm = []
     for meas in measObjects:
@@ -49,22 +43,33 @@ def getallRs():
         RL = SensorRL[name]
         allRs[name] = ((Vcc / np.array(allRs[name]))-1) * RL
     return allRs
-
+"""
 def getAllCorrCoefValues():
     for meas in measObjects:
-        oldValue = []           # to save the previous values of corrcoefDict (needed to update the dict)
+        oldValue = np.array([])          # to save the previous values of corrcoefDict (needed to update the dict)
         for name in mqNames:
             if name in corrcoefDict:
                 oldValue = corrcoefDict[name]
                 oldValue.append(meas.getCorrCoefValues(name))
                 corrcoefDict[name] = oldValue
             else:
-                corrcoefDict[name] = [meas.getCorrCoefValues(name)]
+                corrcoefDict[name] = np.array([meas.getCorrCoefValues(name)])
+    return corrcoefDict
+"""
+def getAllCorrCoefValues():
+    for name in mqNames:
+        corrcoefDict[name] = np.array([])
+    for meas in measObjects:
+        for name in mqNames:
+                corrcoefDict[name] = np.append(corrcoefDict[name], meas.getCorrCoefValues(name))
+            
     return corrcoefDict
 
 def printAVGCorrCoefValues():
-    for meas in measObjects:
-        meas.printCorrCoefValues()
+    corrcoefDict = getAllCorrCoefValues()
+    for name in mqNames:
+        print(f"{name} szenzor átlagos r értéke: {corrcoefDict[name].mean():.4f}\n")
+
 
 def plotAllCorrCoefValues():
     valueDict = getAllCorrCoefValues()
@@ -74,16 +79,13 @@ def plotAllCorrCoefValues():
             plt.xlabel('Mérés sorszáma', fontsize=10)
             plt.ylabel('Összes szenzor korrelációs koefficienciája',  fontsize=10)
             plt.plot(range(1, len(valueDict[name])+1), np.absolute(valueDict[name]) , c=mqColors[name], label= name, marker='.', linestyle='-',)
-            # Put a legend below current axis
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=True, ncol=5)
-    for i in range(1, len(measObjects)):
-        plt.scatter(i, np.average(measObjects[i].getSensorArray('nh3_ppm'))/1000 , c='r', marker='.', linestyle='-', s=200)
     plt.show()
 
 def plotAllMeasurements():
     i = 0
     with plt.style.context('bmh'):
-        fig, ax = plt.subplots(nrows=2, ncols=3)
+        fig, ax = plt.subplots(nrows=3, ncols=3)
         for row in ax:
             for col in row:
                 col.set_title(f'{measObjects[i].getMeasnumber()}. mérés', fontsize=15)
@@ -117,10 +119,10 @@ def plotMQCharacteristic():
 #============================================================================================================#
 #=============================================== Call functions =============================================#
 
-#printAllCorrCoefValues()
+# printAllCorrCoefValues()
 # plotAllCorrCoefValues()
 # plotAllMeasurements()
 plotMQCharacteristic()
-
+# printAVGCorrCoefValues()
 #for meas in measObjects:
 #    meas.plotMeas()

@@ -6115,6 +6115,7 @@
 {"time":1700178348217,"topic":"esp32/MQ7","payload":294}
 {"time":1700178348217,"topic":"esp32/MQ8","payload":1088}
 {"time":1700178348217,"topic":"esp32/MQ9","payload":279}
+{"time":1700178348345,"topic":"esp32/MQ135","payload":0}
 {"time":1700178348345,"topic":"esp32/MQ137","payload":1488}
 {"time":1700178348345,"topic":"esp32/nh3_ppm","payload":2.12}
 {"time":1700178349049,"topic":"esp32/temperature","payload":38.27}

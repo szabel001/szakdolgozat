@@ -58,7 +58,6 @@ def printAVGCorrCoefValues():
     for name in mqNames:
         print(f"{name} szenzor átlagos r értéke: {corrcoefDict[name].mean():.4f}\n")
 
-
 def plotAllCorrCoefValues():
     valueDict = getAllCorrCoefValues()
     with plt.style.context('bmh'):

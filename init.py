@@ -29,7 +29,7 @@ while source != "SD" and source != "MQTT":
 #=============================================== Import files (sd card) =====================================#
 
 if source == 'SD':
-    path = '.\szakdolgozat\meresek\sd\\'
+    path = '.\meresek\sd\\'
     arr = os.listdir(path)
     arr.sort(key=lambda f: int(''.join(filter(str.isdigit, f))))
     for txtName in arr:

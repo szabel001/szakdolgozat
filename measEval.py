@@ -43,19 +43,7 @@ def getallRs():
         RL = SensorRL[name]
         allRs[name] = ((Vcc / np.array(allRs[name]))-1) * RL
     return allRs
-"""
-def getAllCorrCoefValues():
-    for meas in measObjects:
-        oldValue = np.array([])          # to save the previous values of corrcoefDict (needed to update the dict)
-        for name in mqNames:
-            if name in corrcoefDict:
-                oldValue = corrcoefDict[name]
-                oldValue.append(meas.getCorrCoefValues(name))
-                corrcoefDict[name] = oldValue
-            else:
-                corrcoefDict[name] = np.array([meas.getCorrCoefValues(name)])
-    return corrcoefDict
-"""
+
 def getAllCorrCoefValues():
     for name in mqNames:
         corrcoefDict[name] = np.array([])
@@ -122,7 +110,7 @@ def plotMQCharacteristic():
 # printAllCorrCoefValues()
 # plotAllCorrCoefValues()
 # plotAllMeasurements()
-plotMQCharacteristic()
+# plotMQCharacteristic()
 # printAVGCorrCoefValues()
-#for meas in measObjects:
+# for meas in measObjects:
 #    meas.plotMeas()

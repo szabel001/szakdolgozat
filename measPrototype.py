@@ -36,8 +36,8 @@ def plotPPM():
         hum.extend(meas.getSensorArray('humidity'))
         temp.extend(meas.getSensorArray('temperature'))
     with plt.style.context('bmh'):
-        #plt.scatter(list(range(len(ppms[key]))), hum, label= 'páratartalom', marker='v', linestyle='-', color='blue')
-        #plt.scatter(list(range(len(ppms[key]))), temp, label= 'hőmérséklet', marker='*', linestyle='-', color='green')
+        plt.scatter(list(range(len(ppms[key]))), hum, label= 'páratartalom', marker='v', linestyle='-', color='blue')
+        plt.scatter(list(range(len(ppms[key]))), temp, label= 'hőmérséklet', marker='*', linestyle='-', color='green')
         for key in keysList:
             plt.scatter(list(range(len(ppms[key]))), ppms[key], label= key, marker='.', linestyle='-', color=mqColors[key])
             plt.xlabel("Mérési pont sorszáma")
@@ -46,25 +46,27 @@ def plotPPM():
     plt.show()
 
 def plotDiff():
+    hum = []
+    temp = []
     ppms = {'MQ2': [], 'MQ8':[], 'MQ137':[]}
     idx  = np.where(ppms['MQ137'] == 0)
     keysList = [key for key in ppms]
     for meas in measObjects[:]:
         for key in keysList:
             ppms[key] = np.append(ppms[key], calcNH3ppm(meas, key))
+        hum.extend(meas.getSensorArray('humidity'))
+        temp.extend(meas.getSensorArray('temperature'))
 
-    for key in keysList:
-        offset = ppms['MQ137'] - ppms[key] 
-        with plt.style.context('bmh'):
+    with plt.style.context('bmh'):
+        for key in keysList:
+            plt.plot(list(range(len(ppms[key]))), hum, label= 'páratartalom', linestyle='-', color='blue', linewidth=2, alpha=0.4)
+            plt.plot(list(range(len(ppms[key]))), temp, label= 'hőmérséklet',    linestyle='-', color='orange',linewidth=2, alpha=0.4)
+            offset = ppms['MQ137'] - ppms[key] 
             plt.scatter(list(range(len(ppms[key]))), ppms['MQ137'], label= 'MQ137', marker='.', linestyle='-', color='black')
             plt.scatter(list(range(len(ppms[key]))), ppms[key], label= key, marker='.', linestyle='-', color=mqColors[key])
             plt.scatter(list(range(len(ppms[key]))), offset, label= key + ' offset', marker='v', linestyle='dashdot', color='green')
             plt.xlabel("Mérési pont sorszáma")
             plt.ylabel("Számított PPM")
             plt.title(f"{key} szenzor ")
-            plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize="5", fancybox=True, shadow=True, ncol=1)
-        plt.show()
-        print(f"{key} szenzor átlagos offsetje: {offset.mean()}")
-
-plotPPM()
-plotDiff()
+            plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize="10", fancybox=True, shadow=True, ncol=1)
+            plt.show()

@@ -102,6 +102,3 @@ def plotMQChar():
             plt.yscale('log')
 
         plt.show()
-
-printAVGCCVal()
-plotMQChar()

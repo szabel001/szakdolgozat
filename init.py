@@ -119,7 +119,7 @@ class MeasClass:
                 ppm = self.calcNH3ppm(val['MQ137'])
                 valueArray.append(ppm)
             elif mqName == 'time':
-                valueArray.append(val[mqName])#-self.meas[0]['time'])/1000)
+                valueArray.append((val[mqName]-self.meas[0]['time'])/1000)
             else:
                 valueArray.append(val[mqName])
         return np.array(valueArray)

@@ -53,26 +53,26 @@ def getAllCorrCoefValues():
             
     return corrcoefDict
 
-def printAVGCorrCoefValues():
+def printAVGCCVal():
     corrcoefDict = getAllCorrCoefValues()
     for name in mqNames:
         print(f"{name} szenzor átlagos r értéke: {corrcoefDict[name].mean():.4f}\n")
 
-def plotAllCorrCoefValues():
+def plotAllCCVal():
     valueDict = getAllCorrCoefValues()
     with plt.style.context('bmh'):
         plt.title('Korreláció', fontsize=17)
         for name in mqNames:
             plt.xlabel('Mérés sorszáma', fontsize=10)
-            plt.ylabel('Összes szenzor korrelációs koefficienciája',  fontsize=10)
+            plt.ylabel('Korrelációs együttható',  fontsize=10)
             plt.plot(range(1, len(valueDict[name])+1), np.absolute(valueDict[name]) , c=mqColors[name], label= name, marker='.', linestyle='-',)
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=True, ncol=5)
     plt.show()
 
-def plotAllMeasurements():
+def plotAllMeas():
     i = 0
     with plt.style.context('bmh'):
-        fig, ax = plt.subplots(nrows=3, ncols=3)
+        fig, ax = plt.subplots(nrows=2, ncols=3)
         for row in ax:
             for col in row:
                 col.set_title(f'{measObjects[i].getMeasnumber()}. mérés', fontsize=15)
@@ -84,7 +84,7 @@ def plotAllMeasurements():
                 i+=1
     plt.show()
 
-def plotMQCharacteristic():
+def plotMQChar():
     RSValues = getallRs()
     for name in mqNames:
         with plt.style.context('bmh'):
@@ -103,13 +103,5 @@ def plotMQCharacteristic():
 
         plt.show()
 
-#============================================================================================================#
-#=============================================== Call functions =============================================#
-
-# printAllCorrCoefValues()
-# plotAllCorrCoefValues()
-# plotAllMeasurements()
-# plotMQCharacteristic()
-# printAVGCorrCoefValues()
-# for meas in measObjects:
-#    meas.plotMeas()
+printAVGCCVal()
+plotMQChar()

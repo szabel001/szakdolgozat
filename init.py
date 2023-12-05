@@ -21,7 +21,7 @@ SensorRL = {'MQ2': 2, 'MQ3': 10, 'MQ4': 15, 'MQ5': 1, 'MQ6': 20, 'MQ7': 1, 'MQ8'
 #=============================================== Set source =================================================#
 
 while source != "SD" and source != "MQTT":
-    source = input("Adja meg a kívánt forrást! (MQTT / SD):").upper().strip()
+    source = 'SD' #input("Adja meg a kívánt forrást! (MQTT / SD):").upper().strip()
     if(source != "SD" and source != "MQTT"):
         print("Nem megfelelően adta meg a forrás nevét! Próbálja újra! (SD / MQTT)")
 
@@ -29,7 +29,7 @@ while source != "SD" and source != "MQTT":
 #=============================================== Import files (sd card) =====================================#
 
 if source == 'SD':
-    path = '.\meresek\sd\\'
+    path = '.\szakdolgozat\meresek\sd\\'
     arr = os.listdir(path)
     arr.sort(key=lambda f: int(''.join(filter(str.isdigit, f))))
     for txtName in arr:
@@ -123,7 +123,7 @@ class MeasClass:
             else:
                 valueArray.append(val[mqName])
         return np.array(valueArray)
-    
+
     def getMeasnumber(self):
         return self.measnumber
 

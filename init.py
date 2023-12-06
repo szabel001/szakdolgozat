@@ -21,7 +21,7 @@ SensorRL = {'MQ2': 2, 'MQ3': 10, 'MQ4': 15, 'MQ5': 1, 'MQ6': 20, 'MQ7': 1, 'MQ8'
 #=============================================== Set source =================================================#
 
 while source != "SD" and source != "MQTT":
-    source = 'SD' #input("Adja meg a kívánt forrást! (MQTT / SD):").upper().strip()
+    source = input("Adja meg a kívánt forrást! (MQTT / SD):").upper().strip()
     if(source != "SD" and source != "MQTT"):
         print("Nem megfelelően adta meg a forrás nevét! Próbálja újra! (SD / MQTT)")
 

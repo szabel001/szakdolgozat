@@ -3,9 +3,6 @@
 from importModules import *
 from init import *
 
-#m = {'MQ2': -0.265896, 'MQ8': -0.127572, 'MQ137': -0.2701}
-#b = {'MQ2': 0.227674, 'MQ8': 0.089634, 'MQ137': -0.2276}
-
 m = {'MQ2': -0.265896, 'MQ8': -0.127572, 'MQ137': -0.2701}
 b = {'MQ2': 0.227674, 'MQ8': -0.089634, 'MQ137': -0.2276}
 def calcNH3ppm(meas, mqName = "MQ137"):

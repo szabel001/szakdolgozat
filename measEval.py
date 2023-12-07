@@ -44,7 +44,7 @@ def getallRs():
         allRs[name] = ((Vcc / np.array(allRs[name]))-1) * RL
     return allRs
 
-def getAllCorrCoefValues():
+def getAllCCVal():
     for name in mqNames:
         corrcoefDict[name] = np.array([])
     for meas in measObjects:
@@ -54,12 +54,12 @@ def getAllCorrCoefValues():
     return corrcoefDict
 
 def printAVGCCVal():
-    corrcoefDict = getAllCorrCoefValues()
+    corrcoefDict = getAllCCVal()
     for name in mqNames:
         print(f"{name} szenzor átlagos r értéke: {corrcoefDict[name].mean():.4f}\n")
 
 def plotAllCCVal():
-    valueDict = getAllCorrCoefValues()
+    valueDict = getAllCCVal()
     with plt.style.context('bmh'):
         plt.title('Korreláció', fontsize=17)
         for name in mqNames:
